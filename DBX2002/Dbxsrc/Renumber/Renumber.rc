@@ -1,0 +1,178 @@
+//Microsoft App Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+#ifdef APSTUDIO_INVOKED
+//////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""renumbr2.rc""   // non-App Studio edited resources\r\n"
+    "\r\n"
+    "#include ""afxres.rc""     // Standard components\r\n"
+    "\0"
+END
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // APSTUDIO_INVOKED
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDI_RENUMBER            ICON    DISCARDABLE     "RENUMBER.ICO"
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  10, 10, 217, 63
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Component Renumber"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_RENUMBER,IDC_STATIC,11,17,18,20
+    LTEXT           "Component Renumber Application, Version 12..00",
+                    IDC_STATIC,40,10,167,8,SS_NOPREFIX
+    LTEXT           "Copyright \251 1995",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,92,43,32,14,WS_GROUP
+END
+
+IDD_DIALOG_STATUS_BOX DIALOG DISCARDABLE  100, 100, 203, 74
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "",IDC_TEXT_STATUS,13,17,176,14
+    PUSHBUTTON      "Cancel",IDPB_CANCEL,76,52,50,14
+END
+
+IDD_RENUMBER_DLG DIALOG DISCARDABLE  0, 0, 294, 230
+STYLE WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "DBX Component Renumber"
+MENU IDR_MENU1
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Renumber",IDPB_RENUMBER,122,210,50,14
+    PUSHBUTTON      "Exit",IDCANCEL,188,210,50,14
+    LISTBOX         IDLB_PREFIX_INDEX,9,31,79,79,LBS_SORT | LBS_USETABSTOPS | 
+                    LBS_EXTENDEDSEL | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDEB_START_INDEX,106,62,40,12
+    PUSHBUTTON      "Set &Indices",IDPB_SET_INDEX,101,84,50,14
+    PUSHBUTTON      "&Select All",IDPB_SELECT_ALL,20,128,50,14
+    PUSHBUTTON      "&Clear All",IDPB_CLEAR_ALL,20,148,50,14
+    PUSHBUTTON      "&Refresh",IDPB_REFRESH,56,210,50,14
+    EDITTEXT        IDEB_PASS_WIDTH,106,141,40,12
+    RADIOBUTTON     "All - Board Side Not Considered",IDRB_FLIPPEDOPTS_ALL,
+                    165,39,113,10,WS_GROUP
+    RADIOBUTTON     "Top Side, Then Bottom Side",IDRB_FLIPPEDOPTS_TOPBOT,165,
+                    53,115,10,WS_GROUP
+    RADIOBUTTON     "Top Side Only",IDRB_FLIPPEDOPTS_TOPONLY,165,67,116,10,
+                    WS_GROUP
+    RADIOBUTTON     "Bottom Side Only",IDRB_FLIPPEDOPTS_BOTONLY,165,81,116,
+                    10,WS_GROUP
+    RADIOBUTTON     "Top to Bottom, Horizontal",IDRB_LFT_RGT_TOP_BOT,166,134,
+                    102,10,WS_GROUP
+    RADIOBUTTON     "Top to Bottom, Vertical",IDRB_TOP_BOT_LFT_RGT,166,148,
+                    103,10,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "Bottom to Top, Horizontal",IDRB_LFT_RGT_BOT_TOP,166,162,
+                    103,10,WS_GROUP | WS_TABSTOP
+    RADIOBUTTON     "Bottom to Top, Vertical",IDRB_BOT_TOP_LFT_RGT,166,175,
+                    103,10,WS_GROUP | WS_TABSTOP
+    LTEXT           "Prefixes        Indices",IDC_STATIC,9,21,68,8
+    GROUPBOX        "Renumber Direction",IDGB_RENUM_DIR,161,121,124,70
+    LTEXT           "Design Name:",IDC_STATIC,9,7,47,9
+    LTEXT           "",IDST_DESIGN_NAME,56,7,58,8,SS_NOPREFIX | NOT WS_GROUP
+    LTEXT           "Pass Width  (mils)",IDC_STATIC,106,123,40,17
+    GROUPBOX        "Board Options",IDGB_FLIPPED_OPTNS,161,26,124,70
+    LTEXT           "New Indices",IDC_STATIC,106,53,42,7
+    ICON            IDI_RENUMBER,IDC_STATIC,118,16,18,20
+    LTEXT           "",IDST_NUMCOMPS,20,183,70,11,NOT WS_GROUP
+END
+
+IDD_COMPLIST DIALOG DISCARDABLE  160, 140, 218, 184
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Component List"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,89,164,50,14
+    LISTBOX         IDLB_COMPLIST,8,18,201,98,NOT LBS_NOTIFY | 
+                    LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_HSCROLL | WS_TABSTOP
+    LTEXT           "RefDes",IDST_LBHDR_REFDES,12,8,26,9
+    LTEXT           "These are components outside your selection box which have been given temporary reference designators (containing an underscore).  You should ensure that these components are properly renumbered. ",
+                    IDC_STATIC,9,124,204,33
+    LTEXT           "Type",IDST_LBHDR_TYPE,80,8,18,9
+    LTEXT           "Location",IDST_LBHDR_LOC,156,8,30,7
+END
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDM_FILE_EXIT
+    END
+    POPUP "&Help", HELP
+    BEGIN
+        MENUITEM "&About ...",                  IDM_HELP_ABOUT
+    END
+END
+
+
+//////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About Renumber..."
+    IDS_START_INDEX_WARN    "This start index will cause already renumbered components to be un-numbered - do you really wish to use it?"
+    IDS_RENUM_NOTDONE_WARN  "This Renumber operation is only partially done - do you really wish to cancel it?"
+END
+
+
+#ifndef APSTUDIO_INVOKED
+////////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#include "renumbr2.rc"   // non-App Studio edited resources
+
+#include "afxres.rc"     // Standard components
+
+/////////////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

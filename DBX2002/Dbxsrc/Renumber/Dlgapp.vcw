@@ -1,0 +1,11 @@
+[MSVC Status File]
+Version=1.00
+ProjectType=10
+External=0
+BrkptCount=0
+WatchCount=5
+WatchExpr1=p_item
+WatchExpr2=tStatus
+WatchExpr3=&temp_refdes
+WatchExpr4=&work_refdes
+WatchExpr5=pRefDes

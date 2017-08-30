@@ -1,0 +1,37 @@
+Type=Exe
+Form=ROTABS.FRM
+Module=DBX32; dbx32.BAS
+Module=Module1; DbxUtils.bas
+IconForm="Form1"
+Startup="Form1"
+Title="RotateAbsolute"
+ExeName32="Rotabs.exe"
+Path32="..\..\..\..\..\..\..\Shared Build Directories\rdBuild99\Frozen Source Code\P-CAD 2001\Source Code\DBX Applications\Rotate Components"
+Command32=""
+Name="Rotabs"
+HelpContextID="0"
+CompatibleMode="0"
+MajorVer=1
+MinorVer=0
+RevisionVer=0
+AutoIncrementVer=0
+ServerSupportFiles=0
+VersionCompanyName="Accel"
+CompilationType=0
+OptimizationType=0
+FavorPentiumPro(tm)=0
+CodeViewDebugInfo=0
+NoAliasing=0
+BoundsCheck=0
+OverflowCheck=0
+FlPointCheck=0
+FDIVCheck=0
+UnroundedFP=0
+StartMode=0
+Unattended=0
+Retained=0
+ThreadPerObject=0
+MaxNumberOfThreads=1
+
+[MS Transaction Server]
+AutoRefresh=1

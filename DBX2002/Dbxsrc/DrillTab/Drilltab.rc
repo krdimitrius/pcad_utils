@@ -1,0 +1,278 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 300
+//
+
+DTABDATA                300     MOVEABLE PURE   "DRILLTAB.GRS"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""res\\drilltab.rc2""  // non-App Studio edited resources\r\n"
+    "\r\n"
+    "#include ""afxres.rc""     // Standard components\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_DRILLTAB1           ICON    DISCARDABLE     "RES\\DRTAB1.ICO"
+IDI_DRILLTAB2           ICON    DISCARDABLE     "RES\\DRTAB2.ICO"
+IDI_DRILLTAB3           ICON    DISCARDABLE     "RES\\DRTAB3.ICO"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  10, 10, 217, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About DRILLTAB"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_DRILLTAB1,IDC_STATIC,11,17,18,20
+    LTEXT           "DRILLTAB Version 13.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright © 1997",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+END
+
+IDD_DTAPP_DLG DIALOG DISCARDABLE  20, 40, 303, 237
+STYLE WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Drill Symbol Table"
+MENU IDR_MENU1
+FONT 8, "Arial"
+BEGIN
+    CONTROL         "Line &Width:",IDST_LINEWIDTH,"Static",SS_SIMPLE,7,11,37,
+                    8
+    EDITTEXT        IDEB_LINEWIDTH,47,9,84,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Layer:",IDST_LAYER,"Static",SS_SIMPLE,23,28,21,8
+    COMBOBOX        IDCB_LAYER,47,26,84,66,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Text &Style:",IDST_TEXTSTYLE,"Static",SS_SIMPLE,9,45,35,
+                    8
+    COMBOBOX        IDCB_TEXTSTYLE,47,43,84,66,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Location",IDGB_LOCATION,6,62,131,73
+    CONTROL         "&X:",IDST_XLOC,"Static",SS_SIMPLE,16,77,8,8
+    EDITTEXT        IDEB_XLOC,27,75,96,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Y:",IDST_YLOC,"Static",SS_SIMPLE,16,91,8,8
+    EDITTEXT        IDEB_YLOC,27,89,96,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Upper Left",IDRB_LOCUPLEFT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,16,105,50,10
+    CONTROL         "Lower Left",IDRB_LOCLOWLEFT,"Button",BS_AUTORADIOBUTTON,
+                    16,117,50,10
+    CONTROL         "Upper Right",IDRB_LOCUPRIGHT,"Button",
+                    BS_AUTORADIOBUTTON,73,105,54,10
+    CONTROL         "Lower Right",IDRB_LOCLOWRIGHT,"Button",
+                    BS_AUTORADIOBUTTON,73,117,54,10
+    GROUPBOX        "Column",IDGB_COLUMN,6,142,131,66,WS_GROUP
+    CONTROL         "La&bel:",IDST_COLLABEL,"Static",SS_SIMPLE,16,157,21,8
+    EDITTEXT        IDEB_COLLABEL,40,155,83,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Mi&nimum Width (in chars):",IDST_COLMINWIDTH,"Static",
+                    SS_SIMPLE,16,172,84,8
+    EDITTEXT        IDEB_COLMINWIDTH,103,170,20,12,ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Add",IDPB_COLADD,27,189,39,12,WS_GROUP
+    PUSHBUTTON      "&Delete",IDPB_COLDELETE,78,189,37,12,WS_GROUP
+    CONTROL         "&Title:",IDST_TITLE,"Static",SS_SIMPLE,146,11,17,8
+    EDITTEXT        IDEB_TITLE,166,9,131,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "DTABDATA",IDGR_DTPREVIEW,"HGrid",WS_BORDER | WS_GROUP | 
+                    WS_TABSTOP,146,27,151,131
+    GROUPBOX        "Hole Dia Units",IDGB_HDUNITS,146,166,151,42
+    CONTROL         "&Inch",IDRB_HDUNITSIN,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,168,179,27,11
+    CONTROL         "&mm",IDRB_HDUNITSMM,"Button",BS_AUTORADIOBUTTON,168,192,
+                    27,10
+    DEFPUSHBUTTON   "&OK",IDPB_OK,83,217,57,12,WS_GROUP
+    PUSHBUTTON      "&Cancel",IDCANCEL,163,217,57,12,WS_GROUP
+END
+
+IDD_STATUS_DLG DIALOG DISCARDABLE  100, 100, 157, 43
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Drill Table Status"
+FONT 10, "Arial"
+BEGIN
+    CTEXT           "",IDST_STATUS_MSG,8,10,137,23
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDM_FILE_EXIT
+    END
+    POPUP "&Help", HELP
+    BEGIN
+        MENUITEM "&About ...",                  IDM_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About drilltab..."
+    IDS_DS_CROSS            "Cross"
+    IDS_DS_X                "X"
+    IDS_DS_Y                "Y"
+    IDS_DS_T                "T"
+    IDS_DS_HOUR             "Hour"
+    IDS_DS_SIDE_HOUR        "Side Hour"
+    IDS_DS_BOX_LINE         "Box Line"
+    IDS_DS_DIAMOND_LINE     "Diamond Line"
+    IDS_DS_BOX_V            "Box V"
+    IDS_DS_DIAMOND_V        "Diamond V"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_BOX_X            "Box X"
+    IDS_DS_DIAMOND_CROSS    "Diamond Cross"
+    IDS_DS_BOX_CROSS        "Box Cross"
+    IDS_DS_DIAMOND_X        "Diamond X"
+    IDS_DS_BOX_Y            "Box Y"
+    IDS_DS_DIAMOND_Y        "Diamond Y"
+    IDS_DS_BOX_T            "Box T"
+    IDS_DS_DIAMOND_T        "Diamond T"
+    IDS_DS_CIRCLE_LINE      "Circle Line"
+    IDS_DS_CIRCLE_V         "Circle V"
+    IDS_DS_CIRCLE_CROSS     "Circle Cross"
+    IDS_DS_CIRCLE_X         "Circle X"
+    IDS_DS_CIRCLE_Y         "Circle Y"
+    IDS_DS_CIRCLE_T         "Circle T"
+    IDS_DS_UPPER_A          "A"
+    IDS_DS_UPPER_B          "B"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_UPPER_C          "C"
+    IDS_DS_UPPER_D          "D"
+    IDS_DS_UPPER_E          "E"
+    IDS_DS_UPPER_F          "F"
+    IDS_DS_UPPER_G          "G"
+    IDS_DS_UPPER_H          "H"
+    IDS_DS_UPPER_I          "I"
+    IDS_DS_UPPER_J          "J"
+    IDS_DS_UPPER_K          "K"
+    IDS_DS_UPPER_L          "L"
+    IDS_DS_UPPER_M          "M"
+    IDS_DS_UPPER_N          "N"
+    IDS_DS_UPPER_O          "O"
+    IDS_DS_UPPER_P          "P"
+    IDS_DS_UPPER_Q          "Q"
+    IDS_DS_UPPER_R          "R"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_UPPER_S          "S"
+    IDS_DS_UPPER_U          "U"
+    IDS_DS_UPPER_V          "V"
+    IDS_DS_UPPER_W          "W"
+    IDS_DS_UPPER_Z          "Z"
+    IDS_DS_LOWER_A          "a"
+    IDS_DS_LOWER_B          "b"
+    IDS_DS_LOWER_C          "c"
+    IDS_DS_LOWER_D          "d"
+    IDS_DS_LOWER_E          "e"
+    IDS_DS_LOWER_F          "f"
+    IDS_DS_LOWER_G          "g"
+    IDS_DS_LOWER_H          "h"
+    IDS_DS_LOWER_I          "i"
+    IDS_DS_LOWER_J          "j"
+    IDS_DS_LOWER_K          "k"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DS_LOWER_L          "l"
+    IDS_DS_LOWER_M          "m"
+    IDS_DS_LOWER_N          "n"
+    IDS_DS_LOWER_O          "o"
+    IDS_DS_LOWER_P          "p"
+    IDS_DS_LOWER_Q          "q"
+    IDS_DS_LOWER_R          "r"
+    IDS_DS_LOWER_S          "s"
+    IDS_DS_LOWER_T          "t"
+    IDS_DS_LOWER_U          "u"
+    IDS_DS_LOWER_V          "v"
+    IDS_DS_LOWER_W          "w"
+    IDS_DS_LOWER_Y          "y"
+    IDS_DS_LOWER_Z          "z"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#include "res\drilltab.rc2"  // non-App Studio edited resources
+
+#include "afxres.rc"     // Standard components
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

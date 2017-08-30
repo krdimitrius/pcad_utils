@@ -1,0 +1,40 @@
+
+// AddDesCommonDlg.h : файл заголовка
+//
+
+#pragma once
+#include "afxwin.h"
+
+
+// диалоговое окно CAddDesCommonDlg
+class CAddDesCommonDlg : public CDialogEx
+{
+// Создание
+public:
+	CAddDesCommonDlg(CWnd* pParent = NULL);	// стандартный конструктор
+
+// Данные диалогового окна
+	enum { IDD = IDD_ADDDESCOMMON_DIALOG };
+
+	protected:
+	virtual void DoDataExchange(CDataExchange* pDX);	// поддержка DDX/DDV
+
+
+// Реализация
+protected:
+	HICON m_hIcon;
+
+	// Созданные функции схемы сообщений
+	virtual BOOL OnInitDialog();
+	afx_msg void OnPaint();
+	afx_msg HCURSOR OnQueryDragIcon();
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedOk();
+	CComboBox myCombo1;
+	WCHAR IniFilename[1024];
+	long numDesCommon;
+	CEdit EditList;
+	afx_msg void OnBnClickedRadioSelect();
+	afx_msg void OnBnClickedRadioList();
+};
