@@ -390,9 +390,9 @@ static void getComponentValueUnits(TComponent * pComponent, char * pDesCommon,
 	}
 }
 
-// получаю заначение Value компонента по атрибутам RefDes и Value
 //------------------------------------------------------------------------------
-/*! \brief Получение значениz Value компонента по атрибутам RefDes и Value
+/**
+ *  \brief Получение значениz Value компонента по атрибутам RefDes и Value
  *	\param pCompCur - указатель на текущий компонент в таблице компонентов
  *	\param pComponent - указатель на компонент
  *	\param pDesCommon - указатель на значение атрибута DesCommon
@@ -405,67 +405,83 @@ static void getComponentListValue(COMPONENT_LIST_STRUCT * pCompCur, TComponent *
 	char value_str[VALUE_MAX_STRING_LEN];
 	char *pStr;
 	const char *pStr1;
+	int fValueParsing = 1;
+
 	*(pCompCur->value) = 0;
 	// получаю и ищу в DesCommon групповое имя
 	pStr1= getComponentGroupName(pCompCur->indexGroupName,true);
 	pStr = strstr(pDesCommon,pStr1);
-	if(pStr != NULL)
+	if(pStr != NULL) {
 		// удаляю из DesCommon групповое имя
 		pDesCommon = pStr + strlen(pStr1);
+	}
+
 	// разбираю DesCommon
 	if(strlen(pDesCommon) > 0)
 	{	// есть DesCommon
 		// ищу место вставки Value в DesCommon начиная с начала строки
 		pStr = strchr(pDesCommon, '@');
+
 		if(pStr != NULL)
 		{	// есть место для вставки Value
 			*pStr = 0;
 			pStr++;
-		}				
+			fValueParsing = 1;
+		}
+		else {
+			fValueParsing = 0;
+		}
 		//заношу первую часть DesCommon в pValue
 		strcpy_s(pCompCur->value, VALUE_MAX_STRING_LEN, pDesCommon);
-		if( pStr == NULL )
-			// нет места для вставки Value
-			return;
-		pDesCommon = pStr;
-	}
-	// разбираю Value
-	if(strlen(pComponent->value) > 0)
-	{	// есть Value
-		// копирую Value в буфер, убирая при этом из начала строки символ '~'
-		strcpy_s(value_str, VALUE_MAX_STRING_LEN,
-			(pComponent->value + ((pComponent->value[0]=='~')?(1):(0))));
-		// заменяю точку на запятую в Value
-		pStr = strchr(value_str, '.');
-		if(pStr != NULL) *pStr = ',';
-		// корректирую Value по текстовой части RefDes
-		switch(pComponent->refDes[0])
-		{
-		case 'R':
-			getComponentValueUnits(pComponent, pDesCommon, &Raccept, value_str);
-			break;
-		case 'C':
-			getComponentValueUnits(pComponent, pDesCommon, &Caccept, value_str);
-			break;
-		case 'L':
-			getComponentValueUnits(pComponent, pDesCommon, &Laccept, value_str);
-			break;
-		default:
-			break;
+		if (fValueParsing) {
+			// есть место для вставки Value
+			pDesCommon = pStr;
 		}
-		// вставляю Value
-		strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, value_str);
 	}
-	// вставляю окончание pDesCommon
-	strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, pDesCommon);
+
+	if (fValueParsing) {
+		// разбираю Value
+		if(strlen(pComponent->value) > 0)
+		{	// есть Value
+			// копирую Value в буфер, убирая при этом из начала строки символ '~'
+			strcpy_s(value_str, VALUE_MAX_STRING_LEN,
+				(pComponent->value + ((pComponent->value[0]=='~')?(1):(0))));
+			// заменяю точку на запятую в Value
+			pStr = strchr(value_str, '.');
+			if(pStr != NULL) *pStr = ',';
+			// корректирую Value по текстовой части RefDes
+			switch(pComponent->refDes[0])
+			{
+			case 'R':
+				getComponentValueUnits(pComponent, pDesCommon, &Raccept, value_str);
+				break;
+			case 'C':
+				getComponentValueUnits(pComponent, pDesCommon, &Caccept, value_str);
+				break;
+			case 'L':
+				getComponentValueUnits(pComponent, pDesCommon, &Laccept, value_str);
+				break;
+			default:
+				break;
+			}
+			// вставляю Value
+			strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, value_str);
+		}
+		// вставляю окончание pDesCommon
+		strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, pDesCommon);
+	}
+
 	// добавляю тип корпуса
 	if( isInsertPattern )
 	{
-		if( pComponent->patternName != NULL) 
-		{
-			strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, " (корпус ");
-			strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, pComponent->patternName);
-			strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, ")");
+		if ( (pComponent->patternName != NULL) 
+			&& ( strlen(pComponent->patternName) > 0 ) ) {
+				strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, " (корпус ");
+				strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, pComponent->patternName);
+				strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, ")");
+			}
+		else {
+			strcat_s(pCompCur->value, VALUE_MAX_STRING_LEN, " (корпус не определен)"); 
 		}
 	}
 }
@@ -731,8 +747,20 @@ static long getComponentsList(COMPONENT_LIST_STRUCT *listComp, bool isInsertPatt
 	return num_components;
 }
 
-// сравнение двух элементов по Id
-static long compareComponentListElementsById(COMPONENT_LIST_STRUCT *listComp, long *indexComponents, long index1, long index2)
+/**
+ * @brief Функция сравнениния двух компонентов по Id
+ * @param listComp         Список компонентов.
+ * @param indexComponents  Таблица индексов компонентов в списке компонентов.
+ * @param index1           Индекс компонента 1.
+ * @param index1           Индекс компонента 1.
+ * @return Функция возвращает результат сравнения.
+ * @retval 0 - компоненты  идентичны.
+ * @retval 1 - компоненты  1 больше компонента 2.
+ * @retval 0 - компоненты  1 менььше компонента 2.
+ */
+static long 
+compareComponentListElementsById(COMPONENT_LIST_STRUCT *listComp,
+	long *indexComponents, long index1, long index2)
 {
 	COMPONENT_LIST_STRUCT *pComp1 = listComp + indexComponents[index1];
 	COMPONENT_LIST_STRUCT *pComp2 = listComp + indexComponents[index2];
@@ -741,8 +769,20 @@ static long compareComponentListElementsById(COMPONENT_LIST_STRUCT *listComp, lo
 	return 0;
 }
 
-// сравнение двух элементов по и Value
-static long compareComponentListElementsByIdAndValue(COMPONENT_LIST_STRUCT *listComp, long *indexComponents, long index1, long index2)
+/**
+ * @brief Функция сравнениния двух компонентов по Id и Value
+ * @param listComp         Список компонентов.
+ * @param indexComponents  Таблица индексов компонентов в списке компонентов.
+ * @param index1           Индекс компонента 1.
+ * @param index1           Индекс компонента 1.
+ * @return Функция возвращает результат сравнения.
+ * @retval 0 - компоненты  идентичны.
+ * @retval 1 - компоненты  1 больше компонента 2.
+ * @retval 0 - компоненты  1 менььше компонента 2.
+ */
+static long 
+compareComponentListElementsByIdAndValue(COMPONENT_LIST_STRUCT *listComp,
+	long *indexComponents, long index1, long index2)
 {
 	COMPONENT_LIST_STRUCT *pComp1 = listComp + indexComponents[index1];
 	COMPONENT_LIST_STRUCT *pComp2 = listComp + indexComponents[index2];
@@ -761,8 +801,16 @@ static long compareComponentListElementsByIdAndValue(COMPONENT_LIST_STRUCT *list
 	return strcmp(pComp1->value,pComp2->value);
 }
 
-// сортировка компонетов
-static void sortComponentList(COMPONENT_LIST_STRUCT *listComp, long *indexComponents, long num_components, 
+/**
+ * @brief Функция сортировки компонентов
+ * @param listComp         Список компонентов.
+ * @param indexComponents  Таблица индексов компонентов в списке компонентов.
+ * @param num_components   Число компонентов.
+ * @param pFunc            Указатель на функцию сравнения компонетов.
+ */
+static void
+sortComponentList(COMPONENT_LIST_STRUCT *listComp,
+	long *indexComponents, long num_components, 
 	long(* pFunc)(COMPONENT_LIST_STRUCT *,long *, long, long))
 {
 	long i,j;
@@ -1649,7 +1697,8 @@ static bool putToFileComponentList(long typeFile, long typeList, COMPONENT_LIST_
 }
 
 // запись перечня в файл
-bool makeComponentList(long typeFile, long typeList, bool isFeedLine, bool isInsertPattern)
+bool makeComponentList(long typeFile, long typeList, bool isFeedLine, 
+	bool isInsertPattern, bool isSortingRefdes)
 {
 	COMPONENT_LIST_STRUCT *pListComponents;
 	long *pIndexComponents;
@@ -1683,13 +1732,13 @@ bool makeComponentList(long typeFile, long typeList, bool isFeedLine, bool isIns
 			numComponents = mergeComponentListPE(pListComponents,pIndexComponents,numComponents);
 			// слияние соседних позиций в списке компонентов
 			numComponents = mergeComponentListSP(pListComponents,pIndexComponents,numComponents);
-/*
-			// вставляю в Id групповой порядковый номер компонента
-			setIdComponentsByGroupName(pListComponents,pIndexComponents,numComponents);
-			// сортировка списка компонентов по Id и Value
-			sortComponentList(pListComponents,pIndexComponents,numComponents,
-				&compareComponentListElementsByIdAndValue);
-*/
+			if (!isSortingRefdes) {
+				// вставляю в Id групповой порядковый номер компонента
+				setIdComponentsByGroupName(pListComponents,pIndexComponents,numComponents);
+				// сортировка списка компонентов по Id и Value
+				sortComponentList(pListComponents,pIndexComponents,numComponents,
+					&compareComponentListElementsByIdAndValue);
+			}
 			break;
 		// перечень
 		case OUT_LIST_PE:	// для перечня
@@ -1738,22 +1787,26 @@ void CComponentListDlg::OnBnClickedOk()
 	case IDC_RADIO_TYPE_PE:
 		makeComponentList(fileType, OUT_LIST_PE, 
 			(IsDlgButtonChecked(IDC_CHECK_FEED) == BST_CHECKED),
-			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED) );
+			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED),
+			false);
 		break;
 	case IDC_RADIO_TYPE_SP:
 		makeComponentList(fileType, OUT_LIST_SP,
 			(IsDlgButtonChecked(IDC_CHECK_FEED) == BST_CHECKED),
-			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED) );
+			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED),
+			(IsDlgButtonChecked(IDC_CHECK_SORTING_REFDES) == BST_CHECKED) );
 		break;
 	case IDC_RADIO_TYPE_VP:
 		makeComponentList(fileType, OUT_LIST_VP,
 			(IsDlgButtonChecked(IDC_CHECK_FEED) == BST_CHECKED),
-			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED) );
+			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED),
+			(IsDlgButtonChecked(IDC_CHECK_SORTING_REFDES) == BST_CHECKED) );
 		break;
 	case IDC_RADIO_TYPE_LST:
 		makeComponentList(fileType, OUT_LIST,
 			(IsDlgButtonChecked(IDC_CHECK_FEED) == BST_CHECKED),
-			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED) );
+			(IsDlgButtonChecked(IDC_CHECK_INSERT_PATTERN) == BST_CHECKED),
+			false );
 		break;
 	}
 
