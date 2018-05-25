@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CAddDesCommonDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CAddDesCommonDlg::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_RADIO_SELECT, &CAddDesCommonDlg::OnBnClickedRadioSelect)
 	ON_BN_CLICKED(IDC_RADIO_LIST, &CAddDesCommonDlg::OnBnClickedRadioList)
+	ON_BN_CLICKED(IDGET, &CAddDesCommonDlg::OnBnClickedGet)
 END_MESSAGE_MAP()
 
 
@@ -242,6 +243,28 @@ bool addAttribute(char * pRefDes, const char * typeAttr, char * valueAttr)
 	return true;
 }
 
+// считывают атрибут компонента
+bool getAttribute(char * pRefDes, const char * typeAttr, char * valueAttr)
+{
+	TAttribute myAttr; // атрибут
+
+	if(pRefDes == NULL) return false;
+	if(strlen(pRefDes) == 0) return false;
+	//
+	tStatus = TGetFirstCompAttribute(&tContext,pRefDes,&myAttr);
+	while(tStatus == DBX_OK)
+	{
+		if(strcmp(myAttr.type,typeAttr) == 0)
+		{	// есть требуемый атрибут
+			strcpy_s(valueAttr, DBX_MAX_NAME_LEN, myAttr.value);
+			break;
+		}
+		//получаю следующий атрибут
+		tStatus = TGetNextCompAttribute(&tContext,&myAttr);
+	}
+	return true;
+}
+
 // удаление атрибута компонента
 bool deleteAttribute(char * pRefDes, const char * typeAttr)
 {
@@ -288,6 +311,32 @@ bool addAttributesSelect(const char * typeAttr, char * valueAttr)
 	return true;
 }
 
+// чтение атрибута из первого выделенного компонента
+static bool
+getAttributeSelect(const char * typeAttr, char * valueAttr)
+{
+	TItem myItem;
+	//получаю первый компонент
+	tStatus = TGetFirstSelectedItem(&tContext,&myItem);
+	while(tStatus == DBX_OK)
+	{
+		if(myItem.itemType == DBX_SYMBOL)
+		{	// компонент выделен
+			// получаю RefDes выделенного компонента
+			char myRefDes[DBX_MAX_NAME_LEN], *pStr;
+			strcpy_s(myRefDes,DBX_MAX_NAME_LEN,myItem.symbol.refDes);
+			pStr = strchr(myRefDes,':');
+			if(pStr != NULL) *pStr = 0;
+			// добавл€ю атрибут компонена
+			getAttribute(myRefDes, typeAttr, valueAttr);
+			break;
+		}
+		//получаю следующий компонент
+		tStatus = TGetNextSelectedItem(&tContext,&myItem);
+	}
+	return true;
+}
+
 // добавление атрибутов в компоненты из списка
 bool addAttributesList(const char * typeAttr, char * valueAttr, char * listRefDesComp)
 {
@@ -300,6 +349,20 @@ bool addAttributesList(const char * typeAttr, char * valueAttr, char * listRefDe
 		addAttribute(myRefDes,typeAttr,valueAttr);
 		// получаю последующий RefDes
 		flag = getRefDesFromString(myRefDes,NULL);
+	}
+	return true;
+}
+
+// получение атрибута из первого компонента списка
+bool getAttributeList(const char * typeAttr, char * valueAttr, char * listRefDesComp)
+{
+	char myRefDes[DBX_MAX_ATTRIBUTE_LEN];
+	// получаю первый RefDes
+	bool flag = getRefDesFromString(myRefDes,listRefDesComp);
+	if(flag)
+	{
+		// получение атрибута компонена
+		getAttribute(myRefDes, typeAttr, valueAttr);
 	}
 	return true;
 }
@@ -357,6 +420,24 @@ bool processAddAttributes(const char * typeAttr, char * valueAttr, char * listRe
 			flag = addAttributesSelect(typeAttr, valueAttr);
 		else
 			flag = addAttributesList(typeAttr, valueAttr, listRefDesComp);
+	}
+	closeDesign();
+	return flag;
+}
+
+// получение атрибута из компонента
+bool
+processGetAttribute(const char * typeAttr, char * valueAttr, char * listRefDesComp)
+{
+	bool flag = false;
+	if (strlen(typeAttr) == 0)
+		return flag;
+	if(openDesign())
+	{
+		if(listRefDesComp == NULL)
+			flag = getAttributeSelect(typeAttr, valueAttr);
+		else
+			flag = getAttributeList(typeAttr, valueAttr, listRefDesComp);
 	}
 	closeDesign();
 	return flag;
@@ -441,4 +522,46 @@ void CAddDesCommonDlg::OnBnClickedRadioList()
 {
 	// TODO: Add your control notification handler code here
 	EditList.ShowWindow(1);
+}
+
+void CAddDesCommonDlg::OnBnClickedGet()
+{
+	// TODO: Add your control notification handler code here
+	const long sizeBuffer = 255;
+	long length;
+	LPWSTR pStrW = new WCHAR [sizeBuffer];
+	LPSTR pValueA = new CHAR [sizeBuffer * 2];
+	LPSTR pListA = NULL;
+
+	pValueA[0] = 0;
+
+	while (1) {
+		if(GetCheckedRadioButton(IDC_RADIO_SELECT,IDC_RADIO_LIST) == IDC_RADIO_LIST)
+		{
+			// получаю список
+			length = EditList.GetWindowTextLengthW() + 1;
+			if (length > sizeBuffer) {
+				delete pStrW;
+				pStrW = new WCHAR [length];
+			}
+			pListA = new CHAR [length * 2];
+			EditList.GetWindowTextW(pStrW,length);
+			// конвертирую список в ANSI
+			if (!WideCharToMultiByte(CP_ACP, 0, pStrW, length, pListA, length*2, NULL, NULL))
+				break;
+		}
+		processGetAttribute(attrDesCommonType, pValueA, pListA);
+		break;
+	}
+
+	if (pValueA[0]) {
+		// строку конвертирую из ANSI
+		MultiByteToWideChar(CP_ACP, 0, pValueA, -1, pStrW, sizeBuffer);
+		// устанавливаю значение атрибута
+		myCombo1.SetWindowTextW(pStrW);
+	}
+
+	delete pStrW;
+	delete pValueA;
+	delete pListA;
 }

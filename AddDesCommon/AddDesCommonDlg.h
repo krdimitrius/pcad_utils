@@ -37,4 +37,5 @@ public:
 	CEdit EditList;
 	afx_msg void OnBnClickedRadioSelect();
 	afx_msg void OnBnClickedRadioList();
+	afx_msg void OnBnClickedGet();
 };
