@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CAddDesCommonDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_SELECT, &CAddDesCommonDlg::OnBnClickedRadioSelect)
 	ON_BN_CLICKED(IDC_RADIO_LIST, &CAddDesCommonDlg::OnBnClickedRadioList)
 	ON_BN_CLICKED(IDGET, &CAddDesCommonDlg::OnBnClickedGet)
+	ON_BN_CLICKED(IDSAVE2LIST, &CAddDesCommonDlg::OnBnClickedSave2list)
 END_MESSAGE_MAP()
 
 
@@ -460,7 +461,6 @@ bool processDeleteAttributes(const char * typeAttr, char * listRefDesComp)
 	return flag;
 }
 
-
 //========================================================================================
 void CAddDesCommonDlg::OnBnClickedOk()
 {
@@ -497,19 +497,11 @@ void CAddDesCommonDlg::OnBnClickedOk()
 			processAddAttributes(attrDesCommonType,pValueA,pListA);
 			processDeleteAttributes(attrDesChannel,pListA);
 		}
-		// сохраняю значение атрибута
-		if(IsDlgButtonChecked(IDC_CHECK_SAVE) == BST_CHECKED)
-		{
-			WCHAR attrName[DBX_MAX_ATTRIBUTE_LEN];
-			swprintf(attrName,DBX_MAX_ATTRIBUTE_LEN,_T("%d"),numDesCommon);
-			WritePrivateProfileStringW(_T("DesCommon"),attrName,pStrW,IniFilename);
-		}
 		break;
 	}
 	delete pStrW;
 	delete pValueA;
 	delete pListA;
-	CDialogEx::OnOK();
 }
 
 void CAddDesCommonDlg::OnBnClickedRadioSelect()
@@ -564,4 +556,21 @@ void CAddDesCommonDlg::OnBnClickedGet()
 	delete pStrW;
 	delete pValueA;
 	delete pListA;
+}
+
+void CAddDesCommonDlg::OnBnClickedSave2list()
+{
+	// TODO: Add your control notification handler code here
+	long length = myCombo1.GetWindowTextLengthW()+1;
+	LPWSTR pStrW = new WCHAR [length];
+	WCHAR attrName[DBX_MAX_ATTRIBUTE_LEN];
+
+	// получаю значение атрибута
+	myCombo1.GetWindowTextW(pStrW, length);
+	swprintf(attrName, DBX_MAX_ATTRIBUTE_LEN, _T("%d"), numDesCommon);
+	WritePrivateProfileStringW(_T("DesCommon"), attrName, pStrW, IniFilename);
+	myCombo1.AddString(pStrW);
+	numDesCommon++;
+
+	delete pStrW;
 }

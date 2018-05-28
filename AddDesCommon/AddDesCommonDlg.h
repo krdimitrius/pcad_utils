@@ -38,4 +38,5 @@ public:
 	afx_msg void OnBnClickedRadioSelect();
 	afx_msg void OnBnClickedRadioList();
 	afx_msg void OnBnClickedGet();
+	afx_msg void OnBnClickedSave2list();
 };
