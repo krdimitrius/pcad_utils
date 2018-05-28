@@ -509,7 +509,7 @@ void CAddDesCommonDlg::OnBnClickedOk()
 	delete pStrW;
 	delete pValueA;
 	delete pListA;
-	CDialogEx::OnOK();
+//	CDialogEx::OnOK();
 }
 
 void CAddDesCommonDlg::OnBnClickedRadioSelect()
