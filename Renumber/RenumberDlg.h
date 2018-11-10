@@ -37,8 +37,10 @@ public:
 	afx_msg void OnBnClickedRadioMakechanmanual();
 	CEdit Edit3;
 	CEdit Edit4;
+	CButton CheckEco;
 	afx_msg void OnBnClickedRadioNormal();
 	afx_msg void OnBnClickedRadioModule();
 	afx_msg void OnBnClickedRadioMakechan();
 	afx_msg void OnBnClickedRadioAddrefdes();
+	afx_msg void OnBnClickedCheckEco();
 };

@@ -13,6 +13,8 @@
 #define new DEBUG_NEW
 #endif
 
+static const char sVersion[] = "1.0.0.5";
+static const char sName[] = "Renumber Utility";
 
 // диалоговое окно CRenumberDlg
 CRenumberDlg::CRenumberDlg(CWnd* pParent /*=NULL*/)
@@ -29,6 +31,7 @@ void CRenumberDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT2, Edit2);
 	DDX_Control(pDX, IDC_EDIT3, Edit3);
 	DDX_Control(pDX, IDC_EDIT4, Edit4);
+	DDX_Control(pDX, IDC_CHECK_ECO, CheckEco);
 }
 
 BEGIN_MESSAGE_MAP(CRenumberDlg, CDialogEx)
@@ -40,6 +43,7 @@ BEGIN_MESSAGE_MAP(CRenumberDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_MODULE, &CRenumberDlg::OnBnClickedRadioModule)
 	ON_BN_CLICKED(IDC_RADIO_MAKECHAN, &CRenumberDlg::OnBnClickedRadioMakechan)
 	ON_BN_CLICKED(IDC_RADIO_ADDREFDES, &CRenumberDlg::OnBnClickedRadioAddrefdes)
+	ON_BN_CLICKED(IDC_CHECK_ECO, &CRenumberDlg::OnBnClickedCheckEco)
 END_MESSAGE_MAP()
 
 
@@ -47,20 +51,30 @@ END_MESSAGE_MAP()
 
 BOOL CRenumberDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
+	CString name;
 
+	CDialogEx::OnInitDialog();
 	// Задает значок для этого диалогового окна. Среда делает это автоматически,
 	//  если главное окно приложения не является диалоговым
 	SetIcon(m_hIcon, TRUE);			// Крупный значок
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
+	name = sName;
+	name += _T(" v.");
+	name += sVersion;
+
+	CDialogEx::SetWindowTextW(name);
+
 	CheckDlgButton(IDC_RADIO_NORMAL, BST_CHECKED);
 	CheckDlgButton(IDC_RADIO_DIRECTION1, BST_CHECKED);
+
 	Edit1.ShowWindow(0);
 	Edit2.ShowWindow(0);
 	Edit3.ShowWindow(0);
 	Edit4.ShowWindow(0);
+	CheckEco.ShowWindow(1);
+
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
 }
 
@@ -116,6 +130,112 @@ typedef struct COMPONENT_LIST_STRUCT {
 	};
 } COMPONENT_LIST_STRUCT;
 //========================================================================================
+
+/**
+ * @brief Получение имени файла
+ * @param pFilename_p  Указатель на имя файла.
+ * @return true, если имя получено.
+ */
+static bool
+getDesignFilename(char * pFilename_p)
+{
+	TDesign tDesignInfo;
+	//получаю информацию о базе
+	tStatus = TGetDesignInfo(&tContext, &tDesignInfo);
+	if(tStatus == DBX_OK)
+		strncpy_s(pFilename_p, DBX_MAX_NAME_LEN, tDesignInfo.designName, DBX_MAX_NAME_LEN);
+	else
+		strcpy_s(pFilename_p, DBX_MAX_NAME_LEN, "design");
+	return true;
+}
+
+/**
+ * @brief Получение имени ECO-файла из имени файла
+ * @param pFilename_p  Указатель на имя файла.
+ * @return true, если имя получено.
+ */
+static bool
+getEcoFilename(char * pFilename_p)
+{
+	bool result = true;
+	TDesign tDesignInfo;
+	//получаю информацию о базе
+	tStatus = TGetDesignInfo(&tContext, &tDesignInfo);
+	if(tStatus == DBX_OK) {
+		char *pStr;
+		strncpy_s(pFilename_p, DBX_MAX_NAME_LEN, tDesignInfo.designName, DBX_MAX_NAME_LEN);
+		pStr = strrchr(pFilename_p, '.');
+		if(pStr != NULL)
+			*pStr = 0;			
+	}
+	else
+		strcpy_s(pFilename_p, DBX_MAX_NAME_LEN, "design");
+
+	// добавляю расширение
+	strcat_s(pFilename_p, DBX_MAX_NAME_LEN, ".ECO");
+
+	return result;
+}
+
+/**
+ * @brief Функция открытия ECO-файла
+ * @return true, если файл открыт
+ */
+static FILE *
+openEcoFile(void)
+{
+	bool result = true;
+	char sFilename[DBX_MAX_NAME_LEN*5];
+	char sEcoFilename[DBX_MAX_NAME_LEN*5];
+	FILE * hEcoFile = NULL;
+
+	// получаю имя базы
+	if (result)
+		result = getDesignFilename(sFilename);
+
+	// получаю имя ECO
+	if (result)
+		result = getEcoFilename(sEcoFilename);
+
+	// открываю ECO
+	if (result)
+		result = (fopen_s(&hEcoFile, sEcoFilename, "a") == 0);
+
+	// пишу заголовок
+	if (result) 
+		fprintf(hEcoFile, "; %s Version %s [%s]\n", sName, sVersion, sFilename);
+
+	return (result) ? (hEcoFile) : (NULL);
+}
+
+/**
+ * @brief Запись строки в ECO-файл
+ * @param pStr_p  Указатель на строку.
+ * @param idx_p   Индекс записи:
+ *   0 - первая часть;
+ *   1 - вторая часть.
+ */
+static void
+writeEcoFile(FILE * hEcoFile_p, char * pStr_p, int idx_p)
+{
+	if (hEcoFile_p != NULL) {
+		if (idx_p == 0)
+			fprintf(hEcoFile_p, "RefdesChange \"%s\" ", pStr_p);
+		else
+			fprintf(hEcoFile_p, "\"%s\"\n", pStr_p);
+	}
+}
+
+/**
+ * @brief Закрытие ECO-файла
+ */
+static void
+closeEcoFile(FILE * hEcoFile_p)
+{
+	if (hEcoFile_p != NULL)
+		fclose(hEcoFile_p);
+}
+
 /*
 // сравнение двух элементов по Id (для сортировки по уменьшению)
 static long compareComponentListElementsByIdDecrease(COMPONENT_LIST_STRUCT *listComp, long *indexComponents, long index1, long index2)
@@ -520,68 +640,113 @@ static bool makeNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *
 	return true;
 }
 
-// изменяю значения RefDes на новые
-static void saveNewRefDesComponents(long connectionType,COMPONENT_LIST_STRUCT *pList, bool flag)
+/**
+ * @brief Функция изменяет значения RefDes на новые
+ * @param connectionType  Тип соединиения.
+ * @param pList           Указатель на массив компонентов.
+ * @param flag            Флаг удаления '@' из RefDes компонента.
+ * @param hEcoFile_p      Heandle ECO файла.
+ */
+static void saveNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *pList,
+	bool flag, FILE * hEcoFile_p)
 {
 	TComponent myComponent;	// комонент
 	TSymbol mySymbol;		// символ
+	bool bSaveEco = (hEcoFile_p != NULL);
+	char prevName[DBX_MAX_NAME_LEN];
+
+	prevName[0] = 0;
 	//получаю первый компонент
 	tStatus = TGetFirstComponent(&tContext,&myComponent);
 	while(tStatus == DBX_OK)
 	{
-		if(isProcessComponent(connectionType,&myComponent))
-		{	// компонент соответствует заданному типу
+		if(isProcessComponent(connectionType,&myComponent)) {
+			// компонент соответствует заданному типу
 			// получаю первый символ компонента
-			tStatus = TGetFirstCompSymbol(&tContext,myComponent.refDes,&mySymbol);
-			while(tStatus == DBX_OK)
-			{
-				if(flag)
-				{	// удаление "@"
-					char *pStr = strchr(mySymbol.refDes,'@');
-					if(pStr != NULL)
-					{
-						if(*(pStr+1) == ':')
-							strcpy_s(pStr,DBX_MAX_NAME_LEN,pStr+1);
-						else
-							*pStr = 0;
+			tStatus = TGetFirstCompSymbol(&tContext, myComponent.refDes, &mySymbol);
+			while(tStatus == DBX_OK) {
+				if(flag) {
+					// удаление "@"
+					char *pStr = strchr(mySymbol.refDes, '@');
+					if(pStr != NULL) {
+						if (*(pStr+1) == ':') {
+							if (bSaveEco) {
+								*(pStr+1) = 0;
+								if (strcmp(mySymbol.refDes, prevName) != 0) {
+									strcpy_s(prevName, DBX_MAX_NAME_LEN, mySymbol.refDes);
+									writeEcoFile(hEcoFile_p, mySymbol.refDes, 0);
+									*pStr = 0;
+									writeEcoFile(hEcoFile_p, mySymbol.refDes, 1);
+								}
+								*(pStr+1) = ':';
+							}
+							strcpy_s(pStr, DBX_MAX_NAME_LEN, pStr+1);
+						}
+						else {
+							if (bSaveEco) {
+								writeEcoFile(hEcoFile_p, mySymbol.refDes, 0);
+								*pStr = 0;
+								writeEcoFile(hEcoFile_p, mySymbol.refDes, 1);
+							}
+							else
+								*pStr = 0;
+						}
 						// модифицирую символ
 						tStatus = TModifySymbol(&tContext, &mySymbol);
 					}
 				}
-				else if(pList->refdes_new[0] != 0)
-				{	// занесение нового refDes
+				else if(pList->refdes_new[0] != 0) {
+					// занесение нового refDes
 					// есть новый refdes
 					char refdes_new[DBX_MAX_NAME_LEN];
-					strcpy_s(refdes_new,DBX_MAX_NAME_LEN,pList->refdes_new);
+					bool bNewComp = true;
+
+					strcpy_s(refdes_new, DBX_MAX_NAME_LEN, pList->refdes_new);
+					if (bSaveEco) {
+						bNewComp = (strcmp(refdes_new, prevName) != 0);
+						if (bNewComp) {
+							writeEcoFile(hEcoFile_p, refdes_new, 0);
+							strcpy_s(prevName, DBX_MAX_NAME_LEN, refdes_new);
+						}
+					}
 					// добавление "@"
-					strcat_s(refdes_new,DBX_MAX_NAME_LEN,"@");
+					strcat_s(refdes_new, DBX_MAX_NAME_LEN, "@");
+					if (bSaveEco && bNewComp)
+						writeEcoFile(hEcoFile_p, refdes_new, 1);
 					// ищу начало номера cекции
 					char *pStr = strchr(mySymbol.refDes,':');
 					if(pStr != NULL)
-						strcat_s(refdes_new,DBX_MAX_NAME_LEN,pStr);
+						strcat_s(refdes_new, DBX_MAX_NAME_LEN, pStr);
 					// вношу новый refDes
-					strcpy_s(mySymbol.refDes,DBX_MAX_NAME_LEN,refdes_new);
+					strcpy_s(mySymbol.refDes, DBX_MAX_NAME_LEN, refdes_new);
 					// модифицирую символ
 					tStatus = TModifySymbol(&tContext, &mySymbol);
 				}
 				// получаю следующий символ компонента
-				tStatus = TGetNextCompSymbol(&tContext,&mySymbol);
+				tStatus = TGetNextCompSymbol(&tContext, &mySymbol);
 			}
 			// переход к следующей записи
 			pList++;
 		}
 		//получаю следующий компонент
-		tStatus = TGetNextComponent(&tContext,&myComponent);
+		tStatus = TGetNextComponent(&tContext, &myComponent);
 	}
 }
 
 // перенумерация 
-bool processRenumber(long connectionType, bool bDirection)
+bool processRenumber(long connectionType, bool bDirection, bool bSaveEco_p)
 {
 	COMPONENT_LIST_STRUCT *pListComponents = NULL;
 	long *pIndexComponents = NULL;
+	FILE * hEcoFile = NULL;
+
 	while(openDesign())
 	{
+		if (bSaveEco_p) {
+			hEcoFile = openEcoFile();
+			if (hEcoFile == NULL)
+				bSaveEco_p = false;
+		}
 		// получаю число компонентов
 		long numComponents = getNumberComponents(connectionType);
 		if(numComponents < 1) break;
@@ -601,11 +766,12 @@ bool processRenumber(long connectionType, bool bDirection)
 		// получение новых значений RefDes
 		makeNewRefDesComponents(connectionType,pListComponents,pIndexComponents,numComponents);
 		// обновляю значения RefDes
-		saveNewRefDesComponents(connectionType,pListComponents,false);
+		saveNewRefDesComponents(connectionType,pListComponents, false, hEcoFile);
 		// сохраняю значения RefDes
-		saveNewRefDesComponents(connectionType,pListComponents,true);
+		saveNewRefDesComponents(connectionType,pListComponents, true, hEcoFile);
 		break;
 	}
+	closeEcoFile(hEcoFile);
 	closeDesign();
 	delete pListComponents;
 	delete pIndexComponents;
@@ -835,16 +1001,19 @@ void CRenumberDlg::OnBnClickedOk()
 {
 	// гашу кнопку
 	OkButton.EnableWindow(false);
-	// Определяю наппряление 
+	// Определяю направление 
 	bool bDirection = (GetCheckedRadioButton(IDC_RADIO_DIRECTION1,IDC_RADIO_DIRECTION2) == IDC_RADIO_DIRECTION2);
+	// Флаг записи ECO
+	bool bSaveEco = (IsDlgButtonChecked(IDC_CHECK_ECO) == BST_CHECKED);
+
 	// запускаем задачу
 	switch(GetCheckedRadioButton(IDC_RADIO_NORMAL,IDC_RADIO_ADDREFDES))
 	{
 	case IDC_RADIO_NORMAL:
-		processRenumber(DBX_COMPONENT_CONNECTION_NORMAL,bDirection);
+		processRenumber(DBX_COMPONENT_CONNECTION_NORMAL, bDirection, bSaveEco);
 		break;
 	case IDC_RADIO_MODULE:
-		processRenumber(DBX_COMPONENT_CONNECTION_MODULE,bDirection);
+		processRenumber(DBX_COMPONENT_CONNECTION_MODULE, bDirection, false);
 		break;
 	case IDC_RADIO_MAKECHANMANUAL:
 		{
@@ -873,6 +1042,8 @@ void CRenumberDlg::OnBnClickedRadioNormal()
 	Edit2.ShowWindow(0);
 	Edit3.ShowWindow(0);
 	Edit4.ShowWindow(0);
+
+	CheckEco.ShowWindow(1);
 }
 
 void CRenumberDlg::OnBnClickedRadioModule()
@@ -882,6 +1053,8 @@ void CRenumberDlg::OnBnClickedRadioModule()
 	Edit2.ShowWindow(0);
 	Edit3.ShowWindow(0);
 	Edit4.ShowWindow(0);
+
+	CheckEco.ShowWindow(0);
 }
 
 void CRenumberDlg::OnBnClickedRadioMakechanmanual()
@@ -904,6 +1077,7 @@ void CRenumberDlg::OnBnClickedRadioMakechanmanual()
 	Edit4.SetWindowTextW(str);
 	Edit4.EnableWindow(true);
 	
+	CheckEco.ShowWindow(0);
 }
 
 void CRenumberDlg::OnBnClickedRadioMakechan()
@@ -913,6 +1087,8 @@ void CRenumberDlg::OnBnClickedRadioMakechan()
 	Edit2.ShowWindow(0);
 	Edit3.ShowWindow(0);
 	Edit4.ShowWindow(0);
+
+	CheckEco.ShowWindow(0);
 }
 
 void CRenumberDlg::OnBnClickedRadioAddrefdes()
@@ -922,4 +1098,11 @@ void CRenumberDlg::OnBnClickedRadioAddrefdes()
 	Edit2.ShowWindow(0);
 	Edit3.ShowWindow(0);
 	Edit4.ShowWindow(0);
+
+	CheckEco.ShowWindow(0);
+}
+
+void CRenumberDlg::OnBnClickedCheckEco()
+{
+	// TODO: Add your control notification handler code here
 }
