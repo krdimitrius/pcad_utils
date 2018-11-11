@@ -13,6 +13,8 @@
 #define new DEBUG_NEW
 #endif
 
+static const char sVersion[] = "1.0.0.22";
+static const char sName[] = "ComponentList Utility";
 
 // диалоговое окно CComponentListDlg
 CComponentListDlg::CComponentListDlg(CWnd* pParent /*=NULL*/)
@@ -45,6 +47,12 @@ BOOL CComponentListDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
+	CString name;
+	name = sName;
+	name += _T(" v.");
+	name += sVersion;
+	CDialogEx::SetWindowTextW(name);
+
 	CheckDlgButton(IDC_RADIO_TYPE_PE, BST_CHECKED);
 	CheckDlgButton(IDC_RADIO_FILE_TXTSEP, BST_CHECKED);
 

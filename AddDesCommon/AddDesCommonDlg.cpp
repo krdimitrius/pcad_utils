@@ -13,6 +13,8 @@
 #define new DEBUG_NEW
 #endif
 
+static const char sVersion[] = "1.0.0.5";
+static const char sName[] = "AddDesCommon Utility";
 
 // диалоговое окно CAddDesCommonDlg
 CAddDesCommonDlg::CAddDesCommonDlg(CWnd* pParent /*=NULL*/)
@@ -51,6 +53,12 @@ BOOL CAddDesCommonDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
+	CString name;
+	name = sName;
+	name += _T(" v.");
+	name += sVersion;
+	CDialogEx::SetWindowTextW(name);
+
 	CheckDlgButton(IDC_RADIO_SELECT, BST_CHECKED);
 	EditList.ShowWindow(0);
 	// получаю данные из ini-файла

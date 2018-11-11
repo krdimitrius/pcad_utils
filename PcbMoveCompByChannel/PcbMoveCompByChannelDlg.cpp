@@ -12,6 +12,8 @@
 #define new DEBUG_NEW
 #endif
 
+static const char sVersion[] = "1.0.0.7";
+static const char sName[] = "PcbMoveByChannel Utility";
 
 // диалоговое окно CPcbMoveCompByChannelDlg
 
@@ -51,13 +53,19 @@ BOOL CPcbMoveCompByChannelDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
-	CString str;
-	str = "1";
-	Edit1.SetWindowTextW(str);
-	Edit2.SetWindowTextW(str);
-	str = "0.0";
-	Edit3.SetWindowTextW(str);
-	Edit4.SetWindowTextW(str);
+	CString name;
+	name = sName;
+	name += _T(" v.");
+	name += sVersion;
+	CDialogEx::SetWindowTextW(name);
+
+	name = "1";
+	Edit1.SetWindowTextW(name);
+	Edit2.SetWindowTextW(name);
+	name = "0.0";
+	Edit3.SetWindowTextW(name);
+	Edit4.SetWindowTextW(name);
+
 	CheckDlgButton(IDC_RADIO_FIRSTCHAN, BST_CHECKED);
 
 	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления

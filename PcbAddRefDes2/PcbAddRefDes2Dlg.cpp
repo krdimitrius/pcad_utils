@@ -13,6 +13,9 @@
 #define new DEBUG_NEW
 #endif
 
+static const char sVersion[] = "1.0.0.6";
+static const char sName[] = "PcbAddRefDes2Dlg Utility";
+
 // диалоговое окно CPcbAddRefDes2Dlg
 CPcbAddRefDes2Dlg::CPcbAddRefDes2Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPcbAddRefDes2Dlg::IDD, pParent)
@@ -46,6 +49,12 @@ BOOL CPcbAddRefDes2Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
+	CString name;
+	name = sName;
+	name += _T(" v.");
+	name += sVersion;
+	CDialogEx::SetWindowTextW(name);
+
 	CheckDlgButton(IDC_CHECK_ADDREFDES2, BST_CHECKED);
 	CheckDlgButton(IDC_CHECK_VISIBLEREFDES2, BST_UNCHECKED);
 	CheckDlgButton(IDC_CHECK_MOVEREFDES2, BST_UNCHECKED);

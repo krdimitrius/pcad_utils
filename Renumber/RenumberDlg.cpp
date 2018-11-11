@@ -51,8 +51,6 @@ END_MESSAGE_MAP()
 
 BOOL CRenumberDlg::OnInitDialog()
 {
-	CString name;
-
 	CDialogEx::OnInitDialog();
 	// Задает значок для этого диалогового окна. Среда делает это автоматически,
 	//  если главное окно приложения не является диалоговым
@@ -60,6 +58,7 @@ BOOL CRenumberDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Мелкий значок
 
 	// TODO: добавьте дополнительную инициализацию
+	CString name;
 	name = sName;
 	name += _T(" v.");
 	name += sVersion;
@@ -647,15 +646,16 @@ static bool makeNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *
  * @param flag            Флаг удаления '@' из RefDes компонента.
  * @param hEcoFile_p      Heandle ECO файла.
  */
-static void saveNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *pList,
+static void
+saveNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *pList,
 	bool flag, FILE * hEcoFile_p)
 {
 	TComponent myComponent;	// комонент
 	TSymbol mySymbol;		// символ
 	bool bSaveEco = (hEcoFile_p != NULL);
-	char prevName[DBX_MAX_NAME_LEN];
+	char refdes_prev[DBX_MAX_NAME_LEN];
 
-	prevName[0] = 0;
+	refdes_prev[0] = 0;
 	//получаю первый компонент
 	tStatus = TGetFirstComponent(&tContext,&myComponent);
 	while(tStatus == DBX_OK)
@@ -672,8 +672,8 @@ static void saveNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *
 						if (*(pStr+1) == ':') {
 							if (bSaveEco) {
 								*(pStr+1) = 0;
-								if (strcmp(mySymbol.refDes, prevName) != 0) {
-									strcpy_s(prevName, DBX_MAX_NAME_LEN, mySymbol.refDes);
+								if (strcmp(refdes_prev, mySymbol.refDes) != 0) {
+									strcpy_s(refdes_prev, DBX_MAX_NAME_LEN, mySymbol.refDes);
 									writeEcoFile(hEcoFile_p, mySymbol.refDes, 0);
 									*pStr = 0;
 									writeEcoFile(hEcoFile_p, mySymbol.refDes, 1);
@@ -700,21 +700,22 @@ static void saveNewRefDesComponents(long connectionType, COMPONENT_LIST_STRUCT *
 					// есть новый refdes
 					char refdes_new[DBX_MAX_NAME_LEN];
 					bool bNewComp = true;
+					char *pStr;
 
-					strcpy_s(refdes_new, DBX_MAX_NAME_LEN, pList->refdes_new);
 					if (bSaveEco) {
-						bNewComp = (strcmp(refdes_new, prevName) != 0);
+						bNewComp = (strcmp(refdes_prev, pList->refdes_old) != 0);
 						if (bNewComp) {
-							writeEcoFile(hEcoFile_p, refdes_new, 0);
-							strcpy_s(prevName, DBX_MAX_NAME_LEN, refdes_new);
+							strcpy_s(refdes_prev, DBX_MAX_NAME_LEN, pList->refdes_old);
+							writeEcoFile(hEcoFile_p, refdes_prev, 0);
 						}
 					}
+					strcpy_s(refdes_new, DBX_MAX_NAME_LEN, pList->refdes_new);
 					// добавление "@"
 					strcat_s(refdes_new, DBX_MAX_NAME_LEN, "@");
 					if (bSaveEco && bNewComp)
 						writeEcoFile(hEcoFile_p, refdes_new, 1);
 					// ищу начало номера cекции
-					char *pStr = strchr(mySymbol.refDes,':');
+					pStr = strchr(mySymbol.refDes,':');
 					if(pStr != NULL)
 						strcat_s(refdes_new, DBX_MAX_NAME_LEN, pStr);
 					// вношу новый refDes
