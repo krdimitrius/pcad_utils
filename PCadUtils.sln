@@ -16,26 +16,32 @@ Global
 		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 		Release2002|Win32 = Release2002|Win32
+		ReleaseStatic|Win32 = ReleaseStatic|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1100DC17-E620-4194-A27F-D04C05360571}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1100DC17-E620-4194-A27F-D04C05360571}.Debug|Win32.Build.0 = Debug|Win32
 		{1100DC17-E620-4194-A27F-D04C05360571}.Release|Win32.ActiveCfg = Release|Win32
 		{1100DC17-E620-4194-A27F-D04C05360571}.Release2002|Win32.ActiveCfg = Release2002|Win32
+		{1100DC17-E620-4194-A27F-D04C05360571}.ReleaseStatic|Win32.ActiveCfg = ReleaseStatic|Win32
 		{9723BB89-F061-4F1C-8956-5778D4F89FD5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9723BB89-F061-4F1C-8956-5778D4F89FD5}.Release|Win32.ActiveCfg = Release|Win32
 		{9723BB89-F061-4F1C-8956-5778D4F89FD5}.Release2002|Win32.ActiveCfg = Release2002|Win32
+		{9723BB89-F061-4F1C-8956-5778D4F89FD5}.ReleaseStatic|Win32.ActiveCfg = ReleaseStatic|Win32
 		{15D218AE-F352-4F69-A608-357526C55A00}.Debug|Win32.ActiveCfg = Debug|Win32
 		{15D218AE-F352-4F69-A608-357526C55A00}.Release|Win32.ActiveCfg = Debug|Win32
 		{15D218AE-F352-4F69-A608-357526C55A00}.Release|Win32.Build.0 = Debug|Win32
 		{15D218AE-F352-4F69-A608-357526C55A00}.Release2002|Win32.ActiveCfg = Release2002|Win32
+		{15D218AE-F352-4F69-A608-357526C55A00}.ReleaseStatic|Win32.ActiveCfg = ReleaseStatic|Win32
 		{4B0575F8-333C-4A40-B2ED-6E08764D7E08}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4B0575F8-333C-4A40-B2ED-6E08764D7E08}.Release|Win32.ActiveCfg = Release|Win32
 		{4B0575F8-333C-4A40-B2ED-6E08764D7E08}.Release2002|Win32.ActiveCfg = Release2002|Win32
 		{4B0575F8-333C-4A40-B2ED-6E08764D7E08}.Release2002|Win32.Build.0 = Release2002|Win32
+		{4B0575F8-333C-4A40-B2ED-6E08764D7E08}.ReleaseStatic|Win32.ActiveCfg = ReleaseStatic|Win32
 		{B1E3DD0A-3B6C-4575-90D4-226E34C8AF97}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B1E3DD0A-3B6C-4575-90D4-226E34C8AF97}.Release|Win32.ActiveCfg = Release|Win32
 		{B1E3DD0A-3B6C-4575-90D4-226E34C8AF97}.Release2002|Win32.ActiveCfg = Release2002|Win32
+		{B1E3DD0A-3B6C-4575-90D4-226E34C8AF97}.ReleaseStatic|Win32.ActiveCfg = ReleaseStatic|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
