@@ -7,7 +7,7 @@ SET COPYTO="d:\Programs\Pcad2006\Lib\Utils_2006"
 copy *.exe %COPYTO%
 copy *.readme %COPYTO%
 REM copy *.ini %COPYTO%
-SET COPYTO="d:\Programs\Pcad2002\Lib\Utils_2006\static"
+SET COPYTO="d:\Programs\Pcad2006\Lib\Utils_2006\static"
 copy ..\ReleaseStatic\*.exe %COPYTO%
 copy *.readme %COPYTO%
 REM copy *.ini %COPYTO%

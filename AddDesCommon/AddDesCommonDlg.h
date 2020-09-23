@@ -32,6 +32,7 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	CComboBox myCombo1;
+	CComboBox myCombo2;
 	WCHAR IniFilename[1024];
 	long numDesCommon;
 	CEdit EditList;
@@ -39,4 +40,6 @@ public:
 	afx_msg void OnBnClickedRadioList();
 	afx_msg void OnBnClickedGet();
 	afx_msg void OnBnClickedSave2list();
+	afx_msg void OnBnClickedGet2();
+	afx_msg void OnBnClickedOk2();
 };

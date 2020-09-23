@@ -15,6 +15,7 @@
 extern DbxContext tContext; //  Global DBX Conversation Data
 extern long tStatus;        //  Global Return status variable
 // Ќаши атрибуты
+static const char *attrValue = "Value"; // атрибут Value
 static const char *attrRefDes = "refDes"; // атрибут RefDes2
 static const char *attrRefDes_1 = "REFDES"; // атрибут RefDes2
 static const char *attrRefDes2 = "refDes2"; // атрибут RefDes2
