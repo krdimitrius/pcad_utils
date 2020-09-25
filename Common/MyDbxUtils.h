@@ -37,7 +37,7 @@ static const char *attrDesMark = "DesMark"; // атрибут маркированного компонента
 static const char *textSchExtension = ".sch";
 static const char *textPcbExtension = ".pcb";
 static const char *textMerge1Component = ", ";
-static const char *textMergeManyComponents = "...";
+static const char *textMergeManyComponents = "-";
 
 static const char *acceptNumber = "0123456789"; //номер
 static const char *acceptLastChannelComponets = "_"; // признак элемента во вторых каналах

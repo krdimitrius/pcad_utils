@@ -13,7 +13,7 @@
 #define new DEBUG_NEW
 #endif
 
-static const char sVersion[] = "1.0.0.22";
+static const char sVersion[] = "1.0.1.0";
 static const char sName[] = "ComponentList Utility";
 
 // диалоговое окно CComponentListDlg
