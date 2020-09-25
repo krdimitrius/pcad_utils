@@ -13,7 +13,7 @@
 #define new DEBUG_NEW
 #endif
 
-static const char sVersion[] = "1.0.1.0";
+static const char sVersion[] = "1.0.2.0";
 static const char sName[] = "AddDesCommon Utility";
 
 // диалоговое окно CAddDesCommonDlg
@@ -41,6 +41,8 @@ BEGIN_MESSAGE_MAP(CAddDesCommonDlg, CDialogEx)
 	ON_BN_CLICKED(IDSAVE2LIST, &CAddDesCommonDlg::OnBnClickedSave2list)
 	ON_BN_CLICKED(IDGET2, &CAddDesCommonDlg::OnBnClickedGet2)
 	ON_BN_CLICKED(IDOK2, &CAddDesCommonDlg::OnBnClickedOk2)
+	ON_BN_CLICKED(IDDEL2LIST, &CAddDesCommonDlg::OnBnClickedDel2list)
+	ON_BN_CLICKED(IDCANCEL, &CAddDesCommonDlg::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -68,15 +70,16 @@ BOOL CAddDesCommonDlg::OnInitDialog()
 	GetCurrentDirectoryW(1024,IniFilename);
 	wcscat_s(IniFilename,1024,_T("\\AddDesCommon.ini"));
 	myCombo1.AddString(_T("@"));
-	numDesCommon = 0;
-	while(true)
+
+	for (int i = 1; i < 1000; i++)
 	{
-		WCHAR attrValue[DBX_MAX_ATTRIBUTE_LEN];
-		WCHAR attrName[DBX_MAX_ATTRIBUTE_LEN];
-		swprintf(attrName,DBX_MAX_ATTRIBUTE_LEN,_T("%d"),++numDesCommon);
-		if(!GetPrivateProfileString(_T("DesCommon"),attrName,NULL,attrValue,DBX_MAX_ATTRIBUTE_LEN,IniFilename) )
-			break;
-		myCombo1.AddString(attrValue);
+		WCHAR keyName[6];
+		WCHAR keyValue[DBX_MAX_ATTRIBUTE_LEN];
+		swprintf(keyName, 5, _T("%d"), i);
+		if( GetPrivateProfileString(_T("DesCommon"), keyName, NULL, keyValue, DBX_MAX_ATTRIBUTE_LEN, IniFilename) )
+		{
+			myCombo1.AddString(keyValue);
+		}
 	}
 	myCombo1.SetCurSel(0);
 
@@ -582,10 +585,46 @@ void CAddDesCommonDlg::OnBnClickedSave2list()
 
 	// получаю значение атрибута
 	myCombo1.GetWindowTextW(pStrW, length);
-	swprintf(attrName, DBX_MAX_ATTRIBUTE_LEN, _T("%d"), numDesCommon);
-	WritePrivateProfileStringW(_T("DesCommon"), attrName, pStrW, IniFilename);
 	myCombo1.AddString(pStrW);
-	numDesCommon++;
+	for (int i = 1; i < 1000; i++)
+	{
+		WCHAR keyName[6];
+		WCHAR keyValue[DBX_MAX_ATTRIBUTE_LEN];
+		swprintf(keyName, 5, _T("%d"), i);
+		if( !GetPrivateProfileString(_T("DesCommon"), keyName, NULL, keyValue, DBX_MAX_ATTRIBUTE_LEN, IniFilename) )
+		{
+			WritePrivateProfileStringW(_T("DesCommon"), keyName, pStrW, IniFilename);
+			break;
+		}
+	}
+
+	delete pStrW;
+}
+
+void CAddDesCommonDlg::OnBnClickedDel2list()
+{
+	// TODO: Add your control notification handler code here
+	long length = myCombo1.GetWindowTextLengthW() + 1;
+	LPWSTR pStrW = new WCHAR [length];
+
+	myCombo1.GetWindowTextW(pStrW, length);
+	int index = myCombo1.FindString(0, pStrW);
+	if (index > 0)
+		myCombo1.DeleteString(index);
+
+	for (int i = 1; i < 1000; i++)
+	{
+		WCHAR keyName[6];
+		WCHAR keyValue[DBX_MAX_ATTRIBUTE_LEN];
+		swprintf(keyName, 5, _T("%d"), i);
+		if( GetPrivateProfileString(_T("DesCommon"), keyName, NULL, keyValue, DBX_MAX_ATTRIBUTE_LEN, IniFilename) )
+		{
+			if (StrCmpW(pStrW, keyValue) == 0) {
+				WritePrivateProfileStringW(_T("DesCommon"), keyName, NULL, IniFilename);
+				break;
+			}
+		}
+	}
 
 	delete pStrW;
 }
@@ -664,4 +703,11 @@ void CAddDesCommonDlg::OnBnClickedOk2()
 	delete pStrW;
 	delete pValueA;
 	delete pListA;
+}
+
+
+void CAddDesCommonDlg::OnBnClickedCancel()
+{
+	// TODO: Add your control notification handler code here
+	CDialogEx::OnCancel();
 }
