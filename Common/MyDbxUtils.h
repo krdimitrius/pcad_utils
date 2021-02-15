@@ -33,6 +33,8 @@ static const char *attrNoChannelInGroupType1 = "NOCHANNELINGROUP"; // номер кана
 static const char *attrDesChannel = "DesChannel"; // описание канала
 static const char *attrNotList = "NotList";	// PE, SP, ALL - элемент не заносится
 static const char *attrDesMark = "DesMark"; // атрибут маркированного компонента
+static const char *attrFUNCBLOCK = "FUNCBLOCK";
+static const char *attrFIT = "FIT";
 
 static const char *textSchExtension = ".sch";
 static const char *textPcbExtension = ".pcb";

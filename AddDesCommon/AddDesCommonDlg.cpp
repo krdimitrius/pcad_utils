@@ -13,7 +13,7 @@
 #define new DEBUG_NEW
 #endif
 
-static const char sVersion[] = "1.0.2.0";
+static const char sVersion[] = "1.1.0.0";
 static const char sName[] = "AddDesCommon Utility";
 
 // диалоговое окно CAddDesCommonDlg
@@ -29,6 +29,8 @@ void CAddDesCommonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, myCombo1);
 	DDX_Control(pDX, IDC_COMBO2, myCombo2);
 	DDX_Control(pDX, IDC_EDIT_LIST, EditList);
+	DDX_Control(pDX, IDC_EDIT3, EditFuncblock);
+	DDX_Control(pDX, IDC_EDIT4, EditFit);
 }
 
 BEGIN_MESSAGE_MAP(CAddDesCommonDlg, CDialogEx)
@@ -43,6 +45,10 @@ BEGIN_MESSAGE_MAP(CAddDesCommonDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK2, &CAddDesCommonDlg::OnBnClickedOk2)
 	ON_BN_CLICKED(IDDEL2LIST, &CAddDesCommonDlg::OnBnClickedDel2list)
 	ON_BN_CLICKED(IDCANCEL, &CAddDesCommonDlg::OnBnClickedCancel)
+	ON_BN_CLICKED(IDGET3, &CAddDesCommonDlg::OnBnClickedGet3)
+	ON_BN_CLICKED(IDOK3, &CAddDesCommonDlg::OnBnClickedOk3)
+	ON_BN_CLICKED(IDGET4, &CAddDesCommonDlg::OnBnClickedGet4)
+	ON_BN_CLICKED(IDOK4, &CAddDesCommonDlg::OnBnClickedOk4)
 END_MESSAGE_MAP()
 
 
@@ -710,4 +716,158 @@ void CAddDesCommonDlg::OnBnClickedCancel()
 {
 	// TODO: Add your control notification handler code here
 	CDialogEx::OnCancel();
+}
+
+
+void CAddDesCommonDlg::OnBnClickedGet3()
+{
+	// TODO: Add your control notification handler code here
+	const long sizeBuffer = 255;
+	long length;
+	LPWSTR pStrW = new WCHAR [sizeBuffer];
+	LPSTR pValueA = new CHAR [sizeBuffer * 2];
+	LPSTR pListA = NULL;
+
+	pValueA[0] = 0;
+
+	while (1) {
+		if(GetCheckedRadioButton(IDC_RADIO_SELECT,IDC_RADIO_LIST) == IDC_RADIO_LIST)
+		{
+			// получаю список
+			length = EditList.GetWindowTextLengthW() + 1;
+			if (length > sizeBuffer) {
+				delete pStrW;
+				pStrW = new WCHAR [length];
+			}
+			pListA = new CHAR [length * 2];
+			EditList.GetWindowTextW(pStrW,length);
+			// конвертирую список в ANSI
+			if (!WideCharToMultiByte(CP_ACP, 0, pStrW, length, pListA, length*2, NULL, NULL))
+				break;
+		}
+		processGetAttribute(attrFUNCBLOCK, pValueA, pListA);
+		break;
+	}
+
+	if (pValueA[0]) {
+		// строку конвертирую из ANSI
+		MultiByteToWideChar(CP_ACP, 0, pValueA, -1, pStrW, sizeBuffer);
+		// устанавливаю значение атрибута
+		EditFuncblock.SetWindowTextW(pStrW);
+	}
+
+	delete pStrW;
+	delete pValueA;
+	delete pListA;
+}
+
+
+void CAddDesCommonDlg::OnBnClickedOk3()
+{
+	// TODO: Add your control notification handler code here
+	long length = EditFuncblock.GetWindowTextLengthW()+1;
+	LPWSTR pStrW = new WCHAR [length];
+	LPSTR pValueA = new CHAR [length * 2];
+	LPSTR pListA = NULL;
+	// получаю значение атрибута
+	EditFuncblock.GetWindowTextW(pStrW,length);
+	// строку конвертирую в ANSI
+	while (0 != WideCharToMultiByte(CP_ACP, 0, pStrW, length, pValueA,
+                  length*2, NULL, NULL))
+	{
+		if(GetCheckedRadioButton(IDC_RADIO_SELECT,IDC_RADIO_LIST) == IDC_RADIO_LIST)
+		{
+			// получаю список
+			length = EditList.GetWindowTextLengthW()+1;
+			delete pStrW;
+			pStrW = new WCHAR [length];
+			pListA = new CHAR [length * 2];
+			EditList.GetWindowTextW(pStrW,length);
+			// конвертирую список в ANSI
+			if (0 == WideCharToMultiByte(CP_ACP, 0, pStrW, length, pListA, length*2, NULL, NULL))
+				break;
+		}
+		processAddAttributes(attrFUNCBLOCK,pValueA,pListA);
+		break;
+	}
+	delete pStrW;
+	delete pValueA;
+	delete pListA;
+}
+
+
+void CAddDesCommonDlg::OnBnClickedGet4()
+{
+	// TODO: Add your control notification handler code here
+	const long sizeBuffer = 255;
+	long length;
+	LPWSTR pStrW = new WCHAR [sizeBuffer];
+	LPSTR pValueA = new CHAR [sizeBuffer * 2];
+	LPSTR pListA = NULL;
+
+	pValueA[0] = 0;
+
+	while (1) {
+		if(GetCheckedRadioButton(IDC_RADIO_SELECT,IDC_RADIO_LIST) == IDC_RADIO_LIST)
+		{
+			// получаю список
+			length = EditList.GetWindowTextLengthW() + 1;
+			if (length > sizeBuffer) {
+				delete pStrW;
+				pStrW = new WCHAR [length];
+			}
+			pListA = new CHAR [length * 2];
+			EditList.GetWindowTextW(pStrW,length);
+			// конвертирую список в ANSI
+			if (!WideCharToMultiByte(CP_ACP, 0, pStrW, length, pListA, length*2, NULL, NULL))
+				break;
+		}
+		processGetAttribute(attrFIT, pValueA, pListA);
+		break;
+	}
+
+	if (pValueA[0]) {
+		// строку конвертирую из ANSI
+		MultiByteToWideChar(CP_ACP, 0, pValueA, -1, pStrW, sizeBuffer);
+		// устанавливаю значение атрибута
+		EditFit.SetWindowTextW(pStrW);
+	}
+
+	delete pStrW;
+	delete pValueA;
+	delete pListA;
+}
+
+
+void CAddDesCommonDlg::OnBnClickedOk4()
+{
+	// TODO: Add your control notification handler code here
+	long length = EditFit.GetWindowTextLengthW()+1;
+	LPWSTR pStrW = new WCHAR [length];
+	LPSTR pValueA = new CHAR [length * 2];
+	LPSTR pListA = NULL;
+	// получаю значение атрибута
+	EditFit.GetWindowTextW(pStrW,length);
+	// строку конвертирую в ANSI
+	while (0 != WideCharToMultiByte(CP_ACP, 0, pStrW, length, pValueA,
+                  length*2, NULL, NULL))
+	{
+		if(GetCheckedRadioButton(IDC_RADIO_SELECT,IDC_RADIO_LIST) == IDC_RADIO_LIST)
+		{
+			// получаю список
+			length = EditList.GetWindowTextLengthW()+1;
+			delete pStrW;
+			pStrW = new WCHAR [length];
+			pListA = new CHAR [length * 2];
+			EditList.GetWindowTextW(pStrW,length);
+			// конвертирую список в ANSI
+			if (0 == WideCharToMultiByte(CP_ACP, 0, pStrW, length, pListA, length*2, NULL, NULL))
+				break;
+		}
+		processAddAttributes(attrFIT,pValueA,pListA);
+		break;
+	}
+	delete pStrW;
+	delete pValueA;
+	delete pListA;
 }
