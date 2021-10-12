@@ -50,3 +50,52 @@ Renumber.exe
  - добавлять атрибуты "NoChannelGroup" и "NoChannelInGroup" в элементы каналов (каналирование по модулям)
  - добавлять атрибут "RefDes2"
  
+===================================================================================================
+Utilities for working with PCAD
+===================================================================================================
+
+AddDesCommon.exe
+It can (in the "sch" database):
+- add the "DesCommon" attribute to the selected components
+- add the "DesCommon" attribute to the components in the list
+- read attribute values from the "ini" file
+- optionally save the value of the attribute to be added in the "ini" file
+
+ComponentList.exe
+Generates (from "sch" database):
+- list of elements (PE3)
+- specification (SP)
+- list of purchased items (VP)
+- sorted list of elements
+
+PcbAddRefDes2.exe
+It can (in the "pcb" database):
+- delete a copy of the RefDes - "RefDes2" attribute in the "pcb" database
+- change the visibility of the "RefDes2" attribute
+- move "RefDes2" to the "RefDes" place
+- work only with dedicated components
+
+PcbMoveCompByChannel.exe
+It can (in the "pcb" database):
+- place channel components on the model of channel "1"
+For placement, you must specify:
+- the number of the channel group
+- the numbers of the channels placed in the group: 2-5, 6 7,9
+- if channel 1 is set, it will simply be moved to a new location
+- offset relative to the first channel in the group
+If channel 1 is set, it will simply be moved to a new location.
+If multiple channels and a non-zero offset value are specified, then each
+subsequent channel will be set with an offset relative to
+the previous installed channel (not the first channel in the group).
+- moves selected components
+- marks the selected components with the DesMark attribute
+- places the selected components according to the sample of the elements marked with the DesMark attribute
+- removes the DesMark attribute from the components
+
+Renumber.exe
+It can (in the "sch" database):
+- renumber elements in the "sch" database
+- renumber modules in the "sch" database
+- add attributes "Nochannelgroup" and "nochannelingroup" to the selected elements (channeling the selected ones)
+- add attributes "nochannelgroup" and "nochannelingroup" to channel elements (channeling by modules)
+- add attribute "refdes2"
