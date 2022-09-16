@@ -32,7 +32,7 @@ bool closeDesignPcb(void)
 // открываю базу
 bool openDesignSch(void)
 {
-	if(TOpenDesign(DBX_LANGUAGE, DBX_VERSION, "pcb",&tContext) == DBX_OK)
+	if(TOpenDesign(DBX_LANGUAGE, DBX_VERSION, "sch",&tContext) == DBX_OK)
 		return true;
 	return false;
 }

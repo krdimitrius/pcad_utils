@@ -1,0 +1,10 @@
+/*/.exe
+/*/.pdb
+/*/Release
+/*/Release2002
+/*/ReleaseStatic
+/Debug/
+/ipch/
+*.opensdf
+*.sdf
+*.suo

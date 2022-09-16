@@ -587,7 +587,6 @@ void CAddDesCommonDlg::OnBnClickedSave2list()
 	// TODO: Add your control notification handler code here
 	long length = myCombo1.GetWindowTextLengthW()+1;
 	LPWSTR pStrW = new WCHAR [length];
-	WCHAR attrName[DBX_MAX_ATTRIBUTE_LEN];
 
 	// получаю значение атрибута
 	myCombo1.GetWindowTextW(pStrW, length);
