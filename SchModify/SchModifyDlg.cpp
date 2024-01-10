@@ -13,8 +13,35 @@
 #define new DEBUG_NEW
 #endif
 
-static const char sVersion[] = "0.1";
+static const char sVersion[] = "2.0";
 static const char sName[] = "SCH Modify Utility";
+
+#define MODE_SPACE_MASK   256
+#define MODE_MASK         15
+#define MODE_TO_LATIN     0
+#define MODE_TO_CYRILLIC  1
+#define MODE_NUM          2
+
+#define SIZE_ACCEPT       8
+#define NUMBER_ACCEPTS    8
+
+typedef struct COMPONENT_ACCEPT_TEXT
+{
+	const char accept[SIZE_ACCEPT];
+	const char accept2[SIZE_ACCEPT];
+	const char text[MODE_NUM][SIZE_ACCEPT];
+} COMPONENT_ACCEPT_TEXT;
+
+static COMPONENT_ACCEPT_TEXT accepts[NUMBER_ACCEPTS] = {
+	"пПpP",    "",     { "p", "п" },  // пико
+	"нНnN",    "",     { "n", "н"  }, // нано
+	"uU",      "",     { "u", "мк" }, // микро
+	"мМmM",    "кКkK", { "u", "мк" }, // микро
+	"мМmM",    "",     { "m", "м" },  // милли
+	"кКkK",    "",     { "k", "к" },  // кило
+	"МM",      "",     { "M", "М" },  // мега
+	"ГгgG",    "",     { "G", "Г" },  // гига
+};
 
 // CAboutDlg dialog used for App About
 
@@ -210,9 +237,9 @@ static bool check_type_component(TComponent *pComponent, long connectionType)
  * Собственно модификация VALUE:
  * - между значением и текстом добаляется пробел, если необходимо
  * - "." заменяется на ","
- * - латинские буквы заменяются на кириллицу
+ * mode_p - параметр модификации
  */
-static bool modify_value(char * pRefDes, TAttribute * pAttr)
+static bool modify_value(char * pRefDes, TAttribute * pAttr, int mode_p)
 {
 	bool flag = FALSE;
 
@@ -243,30 +270,42 @@ static bool modify_value(char * pRefDes, TAttribute * pAttr)
 
 				// указатель на нецифровую часть
 				psrc = src + size;
-				psrc += strspn(psrc, " ");
 
-				if ((*psrc == 'м') || (*psrc == 'm')) {
-					*pdst++ = ' ';
-					*pdst++ = 'м';
-					if ((*(psrc + 1) == 'к') || (*(psrc + 1) == 'К') || (*(psrc + 1) == 'k') || (*(psrc + 1) == 'K')) {
-						*pdst++ = 'к';
+				for (int i = 0; i < NUMBER_ACCEPTS; i++) {
+					char *p;
+						
+					p = strrchr(psrc, ' ');
+					if (p != NULL) {
+						psrc = p + 1;
 					}
-				}
-				else if ((*psrc == 'к') || (*psrc == 'К') || (*psrc == 'k') || (*psrc == 'K')) {
-					*pdst++ = ' ';
-					*pdst++ = 'к';
-				}
-				else if ((*psrc == 'М') || (*psrc == 'M')) {
-					*pdst++ = ' ';
-					*pdst++ = 'М';
-				}
-				else if ((*psrc == 'г') || (*psrc == 'Г') || (*psrc == 'g') || (*psrc == 'G')) {
-					*pdst++ = ' ';
-					*pdst++ = 'Г';
+
+					if (strlen(psrc) == 0)
+						continue;
+
+					p = (char *)strchr(accepts[i].accept, *psrc);
+					if (p == NULL)
+						continue;
+
+					if (strlen(accepts[i].accept2) > 0) {
+						psrc++;
+
+						if (strlen(psrc) == 0)
+							continue;
+
+						p = (char *)strchr(accepts[i].accept2, *psrc);
+						if (p == NULL)
+							continue;
+					}
+
+					if (mode_p & MODE_SPACE_MASK) {
+						*pdst++ = ' ';
+					}
+
+					strncpy_s(pdst, SIZE_ACCEPT, accepts[i].text[mode_p & MODE_MASK], SIZE_ACCEPT);
+					break;
 				}
 
 				strncpy_s(src, DBX_MAX_ATTRIBUTE_LEN, dst, DBX_MAX_ATTRIBUTE_LEN);
-
 				flag = TRUE;
 			}
 		}
@@ -278,7 +317,7 @@ static bool modify_value(char * pRefDes, TAttribute * pAttr)
 /**
  * Обработка компонентов базы
  */
-static bool process_modify_value(void)
+static bool process_modify_value(int mode_p)
 {
 	if (openDesignSch()) {
 		TComponent myComponent;	// комонент
@@ -294,7 +333,7 @@ static bool process_modify_value(void)
 				while (tStatus == DBX_OK) {
 					// выделяю атрибут VALUE
 					if (strcmp(myAttr.type, attrValue) == 0) {
-						if (modify_value(myComponent.refDes, &myAttr)) {
+						if (modify_value(myComponent.refDes, &myAttr, mode_p)) {
 							TModifyCompAttribute(&tContext, myComponent.refDes, &myAttr);
 						}
 						break;
@@ -317,14 +356,21 @@ static bool process_modify_value(void)
 
 void CSchModifyDlg::OnBnClickedOk()
 {
-//	TODO: Модифицировть для нескольких действий
-//	switch(GetCheckedRadioButton(IDC_RADIO_VALUE, IDC_RADIO_VALUE)) {
-//	case IDC_RADIO_VALUE:
-		process_modify_value();
-//		break;
-//	default:
-//		break;
-//	}
+	int mode = 0;
+
+	if (IsDlgButtonChecked(IDC_IS_SPACE) == BST_CHECKED)
+		mode = MODE_SPACE_MASK;
+
+	switch(GetCheckedRadioButton(IDC_RADIO_LATIN, IDC_RADIO_CYRILLIC)) {
+	case IDC_RADIO_LATIN:
+		process_modify_value(mode + MODE_TO_LATIN);
+		break;
+	case IDC_RADIO_CYRILLIC:
+		process_modify_value(mode + MODE_TO_CYRILLIC);
+		break;
+	default:
+		break;
+	}
 
 	CDialogEx::OnOK();
 }
